@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Burt Result
+{% endblock title %}
+
+
+{% block body %}
+<div class="container">
+    {{user.first_name}} {{user.last_name}} <br>
+    {{user.email}}
+    <hr>
+    Previous Burt Reports-
+
+    {% for report in reports %}
+    <a href="{% url 'run_individual_report' report.pk %}">{{report.name}}</a>
+    <br>
+    {% endfor %}
+
+</div>
+
+
+{% endblock body %}

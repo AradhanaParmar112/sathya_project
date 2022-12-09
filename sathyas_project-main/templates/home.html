@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock title %}
+
+
+{% block body %}
+<form action="{% url 'home' %}" method="POST">
+    {% csrf_token %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                {% csrf_token %}
+                <label>Report Type</label>
+                <select name="type_new_modify" class="custom-select" required>
+                    <option value="new">New</option>
+                    <option value="modify">Modify</option>
+                </select>
+                <br><br>
+                <label>Report Name</label>
+                <input type="text" class="form-control" name="report_name" id="report_name" required>
+                <span style="color: red; display: none;" id="error_text">The Report Name is Already Taken!
+                    <br></span>
+
+
+
+                <button type="submit" id="first_div_button" class="btn btn-outline-danger mt-2">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4" id="first_event" style="display: none;">
+        <div class="card">
+            <div class="card-body">
+
+                <label>Please Select Your Query</label>
+                <select name="query_select" class="custom-select" required>
+                    <option value="burt">Burt</option>
+                    <option value="Jira">Jira</option>
+                    <option value="QTest">QTest</option>
+                    <option value="mixed">Burt/Jira/QTest</option>
+                </select>
+                <br><br>
+                <label>Number of Tables</label>
+                <input type="text" class="form-control" name="number_of_table" id="number_of_table" required>
+                <br>
+
+                <button type="button" class="btn btn-outline-danger mt-2" id="add_button">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="my_container"></div>
+    <div class="container mt-4">
+        <button type="submit" class="btn btn-outline-danger mt-2" id="last_submit_button"
+            style="display: none;">Submit</button>
+    </div>
+
+</form>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+
+<script>
+    const x = document.getElementById('first_event');
+    const y = document.getElementById('error_text');
+    const flag = 0;
+
+    function open_first_event() {
+        x.style.display = "block";
+        document.getElementById("first_div_button").style.display = "none";
+        y.style.display = "none";
+    }
+
+    function if_report_name_exists_handler() {
+        y.style.display = "block";
+    }
+
+    function hide_btn() {
+        document.getElementById('add_button').style.display = "none";
+        document.getElementById('last_submit_button').style.display = "block";
+    }
+
+    function addFields() {
+        var my_str = '<br> <br>';
+        my_str += '<div class="container mt-4" id="second_event">'
+        var number_of_table = document.getElementById("number_of_table").value;
+
+        for (i = 0; i < number_of_table; i++) {
+
+            my_str += '<div class="input-group mb-3"><span class="input-group-text" id="basic-addon3">' + 'Table ' + (i + 1) + ' Name' + '</span><input type="text" class="form-control" required id="basic-url" aria-describedby="basic-addon3" name="table_name_given_by_user'+i+'"></div>'
+            // my_str += '<br> <label>Number of Rows and Coumns</label> <br> <input class="form-control" name="rows'+i+'id=row'+i+'"> <br><input class="form-control" name="col'+i+'id=col'+i+'">'
+            my_str += '<div class="row"><div class="col"><label>Enter Number of Rows</label><input type="text" required name="row' + i + '" id="row' + i + '" class="form-control"></div><div clrequiredass="col"><label>Enter Number of Columns</label><input type="text" required name="col' + i + '" id="col' + i + '" class="form-control"></div></div>';
+            my_str += '<button type="button" onclick="addTheUpdatedTable(' + i + ')" id="btn" class="btn btn-outline-danger mt-2">Apply</button> <br><hr><br>';
+            my_str += '<div id="table' + i + '"></div> <br> <hr>'
+
+        }
+        my_str += '</div>';
+        return my_str;
+    }
+
+    $(document).ready(function () {
+        $('#main_form').on('submit', function (e) {
+            e.preventDefault();
+        });
+
+        $('#first_div_button').on('click', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'report_name_check' %}",
+                data: {
+                    report_name: $('#report_name').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (data) {
+                    if (data.status == 1) {
+                        if_report_name_exists_handler();
+                    }
+                    else {
+                        open_first_event();
+                    }
+
+                },
+            });
+
+        });
+
+        $(document).ready(function () {
+            var wrapper = $(".my_container");
+            var add_button = $("#add_button");
+
+            $(add_button).click(function (e) {
+                e.preventDefault();
+                // console.log(addFields());
+                var my_s = addFields();
+                $(wrapper).append(my_s);
+                hide_btn();
+            });
+        });
+
+        $('#btn').on('click', function (e) {
+            e.preventDefault();
+        });
+
+
+
+
+    });
+
+    function tableHelper(row, col, value) {
+        var my_str = '';
+
+        my_str = my_str + '<table class="table"> <thead class="thead"> <tr> <th scope="col"><input type="text" class="form-control" name="row_head_name'+value+'" placeholder="Row Header Name"></th>'
+            for (j = 0; j < col; j++) {
+                my_str += '<th scope="col">';
+                my_str += '<input type="text" class="form-control" placeholder="Enter Column Name" name="keyword' + value + j + '"> </th>';
+
+            }
+            my_str += '</tr> </thead> <tbody>';
+            for (k = 0; k < row; k++) {
+                my_str += '<tr><td><input type="text" class="form-control" placeholder="Enter Row Name" name="mainkeyword' + value + k + '"' + '></td>';
+                for (j = 0; j < col; j++) {
+                    my_str += '<td><input type="text" class="form-control" name="q' + value + k + j + '"' + ' placeholder="Enter Query"> </td>';
+                }
+                my_str += '</tr>';
+            }
+        my_str += '</tbody> </table> <br>'
+
+        return my_str;
+    }
+    document.getElementById("btn").addEventListener("click", function (event) {
+        event.preventDefault();
+    });
+    function addTheUpdatedTable(value) {
+        console.log(value);
+        console.log('hitted');
+        row = document.getElementById('row' + value).value;
+        col = document.getElementById('col' + value).value;
+        var parent_div = document.getElementById('table' + value);
+        var number_of_table = document.getElementById("number_of_table").value;
+        parent_div.innerHTML = tableHelper(row, col, value);
+    }
+
+
+</script>
+{% endblock body %}

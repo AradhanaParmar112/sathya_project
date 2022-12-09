@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Burt Result
+{% endblock title %}
+
+
+{% block body %}
+<div class="container">
+    {% for r in result %}
+    <h1>{{r.name}}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">{{r.row_head_name}}</th>
+                {% for item in r.header %}
+                <th scope="col">{{item}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in r.rows %}
+            <tr>
+                {% for inner_item in item %}
+                <td>{{inner_item}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <br>
+    {% endfor %}
+</div>
+
+<br>
+<div class="container">
+  <h1>Outputs</h1>
+  {% for out in output %}
+  <pre>
+    {{out}}
+    </pre>
+   <br>
+  {% endfor %}
+</div>
+
+
+{% endblock body %}
+
+
+<!--     
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+      </tr>
+    </tbody>
+  </table> -->

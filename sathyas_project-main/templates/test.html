@@ -1,0 +1,9 @@
+{% for t in report.tables.all %}
+{% for item in t.header.all %}
+{{item}}
+{% endfor %}
+<br>
+{% for item in t.rows.all %}
+{{item.the_row.the_holder}}
+{% endfor %}
+{% endfor %}
