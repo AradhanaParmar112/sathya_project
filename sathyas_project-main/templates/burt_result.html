@@ -36,7 +36,13 @@ Burt Result
 
 <br>
 <div class="container">
-  <h1>Outputs</h1>
+  <div class="d-flex justify-content-between">
+    <h1>Outputs</h1>
+    <div class="p-4">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" >Send Report</button>
+    </div>
+  </div>
+  
   {% for out in output %}
   <pre>
     {{out}}
@@ -44,6 +50,37 @@ Burt Result
    <br>
   {% endfor %}
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Send Report</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'send-mail' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="report_id" value="{{report_obj.id}}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="emails" class="form-label">Add Email</label>
+            <p><small class="text-muted">Can add multiple emails with comma , separated.</small></p>
+            
+            <textarea class="form-control" name="email-list" id="emails" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+
 
 
 {% endblock body %}

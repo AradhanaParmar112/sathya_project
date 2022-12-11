@@ -9,4 +9,5 @@ urlpatterns = [
     path('query_runner', helpers.query_runner, name='query_runner'),
     path('show_profile', views.show_profile, name='show_profile'),
     path('run_individual_report/<int:pk_>', views.run_individual_report, name='run_individual_report'),
+    path("send-mail/", views.send_report, name="send-mail")
 ]

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Report</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        table,
+        td,
+        th {
+            border: 1px solid;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% for r in result %}
+        <h1>{{r.name}}</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">{{r.row_head_name}}</th>
+                    {% for item in r.header %}
+                    <th scope="col">{{item}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in r.rows %}
+                <tr>
+                    {% for inner_item in item %}
+                    <td>{{inner_item}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        <br>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>

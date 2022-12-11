@@ -1,8 +1,33 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 import json
 from .models import Table, Report
 from django.contrib.auth.decorators import login_required
 from . helpers import *
+from django.core.mail import EmailMessage
+from django.template.loader import get_template
+
+
+@login_required(login_url='login')
+def send_report(request):
+    if request.method == "POST":
+        pk = request.POST.get("report_id")
+        email_list = request.POST.get("email-list").split(",")
+        result, output = query_runner(pk)
+        message = get_template("mail.html").render({"result":result})
+        email = EmailMessage(
+            subject="Report",
+            body=message,
+            #from_email="yourmail",
+            to=email_list,
+            )
+        email.content_subtype = "html"
+        try:
+            email.send()
+        except Exception as e:
+            print(e)
+            print("some error occured")
+            
+        return redirect("home")
 
 
 # Create your views here.
