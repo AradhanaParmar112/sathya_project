@@ -13,7 +13,12 @@ def send_report(request):
         pk = request.POST.get("report_id")
         email_list = request.POST.get("email-list").split(",")
         result, output = query_runner(pk)
-        message = get_template("mail.html").render({"result":result})
+        context = {
+                'report_obj': Report.objects.get(pk=pk),
+                'result': result,
+                'output': output
+            }
+        message = get_template("mail.html").render(context)
         email = EmailMessage(
             subject="Report",
             body=message,
