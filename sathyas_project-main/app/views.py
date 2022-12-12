@@ -11,10 +11,19 @@ from django.template.loader import get_template
 def send_report(request):
     if request.method == "POST":
         pk = request.POST.get("report_id")
+        report = Report.objects.get(pk=pk)
         email_list = request.POST.get("email-list").split(",")
-        result, output = query_runner(pk)
+        query = report.type_of_report
+        if query == "burt":
+            result, output = query_runner(pk)
+        elif query == "QTest":
+            result, output = query_runner_qtest(pk)
+        elif query == "Jira":
+            pass
+        elif query == "mixed":
+            result, output = mixed_query_runner(pk)
         context = {
-                'report_obj': Report.objects.get(pk=pk),
+                'report_obj': report,
                 'result': result,
                 'output': output
             }
